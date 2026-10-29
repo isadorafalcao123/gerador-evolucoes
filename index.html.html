@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Evolução Cirurgia Geral</title><style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#233044;background:#f4f6f9}*{box-sizing:border-box}body{margin:0}header{background:#162b42;color:white;padding:23px 5vw}h1{font-size:23px;margin:0}header p{margin:6px 0 0;color:#cbd7e3}.wrap{max-width:1100px;margin:22px auto;padding:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:white;border:1px solid #dce3ea;border-radius:14px;padding:19px;min-width:0}h2{font-size:17px;margin:0 0 13px;color:#19344f}h3{font-size:14px;color:#476078;margin:18px 0 8px}.field{margin-bottom:12px}label{display:block;font-size:13px;font-weight:600;margin:0 0 5px}input,textarea,select{width:100%;padding:10px;border:1px solid #cdd7e0;border-radius:8px;background:#fff;font:inherit;font-size:14px}textarea{min-height:68px;resize:vertical}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chips{display:flex;flex-wrap:wrap;gap:7px}.chips label{display:flex;align-items:center;gap:5px;border:1px solid #d5dfe8;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:500;margin:0}.chips input{width:auto}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}button{border:0;background:#174d73;color:white;padding:11px 15px;border-radius:9px;cursor:pointer;font-weight:600}button.secondary{background:#e8eef3;color:#223b52}#out{width:100%;height:650px;line-height:1.5;font-family:ui-monospace,monospace;font-size:12px;white-space:pre-wrap}.hint{color:#64748b;font-size:12px;line-height:1.5}.warn{background:#fff8e6;border:1px solid #f1db9c;padding:11px;border-radius:9px;color:#725414;font-size:12px;margin-top:12px}@media(max-width:760px){.wrap{grid-template-columns:1fr}#out{height:480px}}.layout{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:calc(100vh - 90px)}.sidebar{background:#fff;border-right:1px solid #dce3ea;padding:18px 12px;position:sticky;top:0;height:100vh;overflow:auto}.side-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}.side-head h2{margin:0}.side-head button{font-size:12px;padding:8px}.sidebar #sideSearch{margin-bottom:13px}.side-patients{display:flex;flex-direction:column;gap:6px}.patient-item{display:flex;align-items:center;gap:10px;width:100%;background:transparent;color:#263c51;text-align:left;border:1px solid transparent;padding:10px;border-radius:10px;overflow-wrap:anywhere}.patient-item:hover{background:#f0f5f9}.patient-item.active{background:#e5f0f8;border-color:#aac9dc;color:#12486c}.patient-avatar{display:grid;place-items:center;flex:none;background:#e6edf3;border-radius:9px;width:32px;height:32px;color:#31536b}.layout .wrap{width:100%;max-width:1200px;margin:22px auto}@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid #dce3ea;padding:14px 16px}.side-patients{flex-direction:row;overflow-x:auto}.patient-item{width:auto;min-width:130px;flex:none}.layout .wrap{margin:12px auto}} 
+/* Layout com barra lateral permanente em desktop e gaveta lateral em celular */
+.layout{grid-template-columns:280px minmax(0,1fr)}
+.layout .wrap{grid-template-columns:minmax(0,1fr) minmax(0,1fr);padding:0 18px;gap:14px;align-content:start}
+.sidebar{z-index:20;top:0;height:100vh;position:sticky}
+.patient-item{justify-content:flex-start}.patient-meta{margin-left:auto;font-size:11px;white-space:nowrap}.patient-item.done .patient-meta{color:#08734d}.patient-item.pending .patient-meta{color:#8c651e}
+.mobile-menu,.close-menu{display:none}.sidebar-overlay{display:none}
+@media(max-width:1100px){.layout .wrap{grid-template-columns:1fr}.layout .wrap .panel{grid-column:1!important}}
+@media(max-width:850px){.layout{display:block}.sidebar{position:fixed;left:0;top:0;bottom:0;width:min(84vw,330px);height:100dvh;transform:translateX(-105%);transition:transform .2s ease;box-shadow:5px 0 25px #0002;overflow:auto}.sidebar.open{transform:translateX(0)}.sidebar-overlay.open{display:block;position:fixed;inset:0;background:#0d223b88;z-index:19}.mobile-menu{display:block;position:sticky;top:0;z-index:10;width:100%;border-radius:0;text-align:left;background:#244e70}.close-menu{display:block;width:100%;background:#e8eef3;color:#233044;margin-bottom:10px}.side-patients{flex-direction:column;overflow:visible}.patient-item{width:100%;min-width:0}.layout .wrap{margin:12px auto;padding:0 12px}}
+#fastSection[hidden]{display:none!important}
+.lab-table-wrap{overflow:auto;max-height:430px;border:1px solid #dce3ea;border-radius:10px}.lab-table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}.lab-table th,.lab-table td{border-bottom:1px solid #e3e9ee;padding:9px 12px;text-align:right}.lab-table th:first-child,.lab-table td:first-child{text-align:left;position:sticky;left:0;background:white;z-index:1}.lab-table th{background:#edf3f7;position:sticky;top:0;z-index:2}.lab-table th:first-child{z-index:3;background:#edf3f7}.trend{font-weight:700}.lab-toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center}.lab-toolbar button{font-size:12px}.lab-note{font-size:12px;color:#52657a}.lab-preview{font-size:12px;background:#f0f4f8;border-radius:8px;padding:10px;white-space:pre-wrap}
+.lab-inline{border:1px solid #dce3ea;border-radius:12px;padding:16px;margin:20px 0;background:#f8fafc}.lab-inline .lab-table-wrap{max-width:100%;overflow-x:auto}
+/* Fluxo cadastro -> evolução */
+.layout .wrap{display:block;max-width:1120px}
+#registrationView,#evolutionView{width:100%}
+#registrationView{max-width:790px;margin:0 auto}
+#registrationView .panel{margin-bottom:16px}
+#evolutionView{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+#evolutionView>.panel{min-width:0}
+#evolutionView>.panel:first-child{grid-column:1/-1}
+.workflow-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:0 0 15px}
+.workflow-title{font-size:20px;font-weight:750;color:#19344f;margin:0}
+.workflow-note{font-size:13px;color:#64748b}
+@media(max-width:850px){#evolutionView{grid-template-columns:1fr}}
+.patient-group{margin:12px 0 18px}.patient-group-title{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:#4b647b;padding:8px 6px;border-bottom:1px solid #e2e8f0;margin:0 0 6px}.patient-label{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;font-weight:650}.bed-tag{font-size:11px;color:#4d6376;font-weight:500}.patient-meta{font-size:10px;white-space:nowrap}.patient-item{gap:6px}.patient-avatar{width:27px;height:27px}</style><style>#registrationView[hidden],#evolutionView[hidden]{display:none!important}#registrationView{display:block}#evolutionView{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}#evolutionView>.panel{min-width:0}#evolutionView>.panel:nth-child(3){grid-column:1/-1}@media(max-width:850px){#evolutionView{grid-template-columns:1fr}}</style></head><body>
+<header><h1>✚ Evolução • Cirurgia Geral</h1><p>Gerador local de texto clínico · PS e enfermaria · versão 4.0</p></header>
+<button aria-label="Abrir lista de pacientes" class="mobile-menu" id="openSidebar" type="button">☰ Pacientes</button><div class="sidebar-overlay" id="sidebarOverlay"></div><div class="layout"><aside class="sidebar" id="patientSidebar"><button aria-label="Fechar lista" class="close-menu" id="closeSidebar" type="button">✕ Fechar</button><div class="side-head"><h2>Pacientes</h2><button id="sideNew" type="button">+ Novo</button></div><input aria-label="Buscar paciente" id="sideSearch" placeholder="Buscar código fictício"/><p class="hint" id="sideCounts"></p><div class="side-patients" id="sidePatients"></div><p class="hint">Somente códigos fictícios. Não cadastre dados identificáveis.</p></aside><main class="wrap">
+<div id="registrationView"><div class="workflow-actions"><h2 class="workflow-title">1. Cadastro do paciente</h2><span class="workflow-note">Preencha os dados fixos e clique em Próxima página</span></div><section class="panel" style="grid-column:1/-1"><h2>Pacientes cadastrados (identificadores fictícios)</h2><p class="hint">Cadastre um código não identificável para recuperar HD, HPMA, AP e cirurgia/DPO. Os dados são salvos apenas no armazenamento deste navegador, sem sincronização. <strong>Não insira nome, registro, CPF, leito real ou outros dados identificáveis.</strong> O armazenamento local não é criptografado e não é adequado para dados reais de pacientes.</p><div class="twocol"><div class="field"><label>Código fictício do paciente</label><input id="patientCode" placeholder="Ex.: CASO-A"/></div><div class="field"><label>Selecionar cadastro</label><select id="patientList"><option value="">Novo cadastro</option></select></div></div><div class="actions"><button id="savePatient" type="button">Salvar / atualizar cadastro</button><button class="secondary" id="newPatient" type="button">Novo paciente</button><button class="secondary" id="clearDaily" type="button">Nova evolução diária</button><button id="markDone" type="button">✓ Marcar evoluído hoje</button><button class="secondary" id="unmarkDone" type="button">Desmarcar</button><button class="secondary" id="deletePatient" type="button">Excluir cadastro</button></div><p class="hint" id="patientStatus" role="status"></p></section><section class="panel" id="registrationFields"><h2>Dados do cadastro</h2><p class="hint">Cirurgia e data ficam em campos separados. Na evolução gerada, o pós-operatório aparece na primeira linha da HD.</p><div class="field"><label>Especialidade / estágio atual</label><select id="especialidade"><option value="CIRURGIA GERAL">Cirurgia geral</option><option value="CIRURGIA VASCULAR">Cirurgia vascular</option><option value="CIRURGIA TORÁCICA">Cirurgia torácica</option><option value="CIRURGIA PEDIÁTRICA">Cirurgia pediátrica</option><option value="UROLOGIA">Urologia</option><option value="GASTROCIRURGIA">Gastrocirurgia</option><option value="TRANSPLANTE HEPÁTICO">Transplante hepático</option></select><p class="hint">A especialidade aparece na primeira linha do texto gerado, antes da identificação.</p></div><div class="field"><label>Modelo</label><select id="modelo"><option>ENFERMARIA CIRURGIA GERAL</option><option>PS CIRURGIA GERAL</option></select></div><div class="twocol"><div class="field"><label>Local de internação</label><select id="setorPaciente"><option value="ENFERMARIA">Enfermaria</option><option value="UTI">UTI</option><option value="PS">Pronto-socorro</option></select></div><div class="field"><label>Leito (identificador fictício)</label><input id="leitoPaciente" placeholder="Ex.: L-01" maxlength="24"/></div></div><div class="field"><label>Identificação (somente código fictício nos testes)</label><input id="id" placeholder="Paciente / leito (opcional)"/></div><div class="field"><label>HD / diagnóstico</label><textarea id="hd" placeholder="Uma hipótese por linha"></textarea></div><div class="twocol"><div class="field"><label>Cirurgia realizada</label><input id="cirurgia" placeholder="Ex.: Colecistectomia videolaparoscópica"/></div><div class="field"><label>Data da cirurgia</label><input id="dataCirurgia" type="date"/></div></div><div class="field"><label>PO calculado automaticamente</label><input id="dpoCalculado" placeholder="Informe a data da cirurgia" readonly=""/><p class="hint">Dia da cirurgia = 0º PO. A data da evolução é preenchida automaticamente com o dia atual. Você pode alterá-la para evoluções retroativas.</p></div><input id="dpo" type="hidden"/><div class="field"><label>HPMA / contexto de internação (opcional)</label><textarea id="hpma"></textarea></div><div class="field"><label>Antecedentes patológicos (AP)</label><textarea id="ap" placeholder="Ex.: HAS, DM2"></textarea></div><div class="field"><label>Antecedentes cirúrgicos (ACx)</label><textarea id="acx" placeholder="Ex.: Apendicectomia prévia"></textarea></div><div class="field"><label>Medicações de uso contínuo (MUC)</label><textarea id="muc" placeholder="Ex.: Losartana 50 mg/dia"></textarea></div><div class="field"><label>Alergias</label><textarea id="alergias" placeholder="Ex.: Nega alergias conhecidas"></textarea></div></section><div class="workflow-actions"><button id="startEvolution" type="button">Salvar cadastro e ir para evolução →</button></div></div><div hidden="" id="evolutionView"><div class="workflow-actions" style="grid-column:1/-1"><button class="secondary" id="backRegistration" type="button">← Voltar ao cadastro</button><div><h2 class="workflow-title">2. Evolução diária</h2><span class="workflow-note" id="currentPatientLabel"></span></div></div><section class="panel" style="grid-column:1/-1"><h2>Histórico de evoluções</h2><p class="hint">Salve os campos diários por data. Você pode recuperar uma evolução anterior como rascunho para revisar; o histórico original não será alterado.</p><div class="actions"><button id="saveDailySnapshot" type="button">Salvar evolução do dia</button><button id="copyPreviousDaily" class="secondary" type="button">Usar última evolução como base</button></div><div class="twocol"><div class="field"><label for="dailyHistorySelect">Evoluções salvas</label><select id="dailyHistorySelect"><option value="">Nenhuma evolução salva</option></select></div><div class="field"><label>Ações do histórico</label><div class="actions"><button id="loadDailySnapshot" class="secondary" type="button">Abrir evolução salva</button><button id="deleteDailySnapshot" class="secondary" type="button">Excluir registro selecionado</button></div></div></div><p class="hint" id="dailyHistoryStatus" role="status"></p><p class="hint">Ao reutilizar uma evolução, revise obrigatoriamente sintomas, exame físico, controles, medicamentos e condutas. Confirmações de discussão não são copiadas.</p></section><section class="panel"><h2>Data da evolução</h2><div class="field"><label>Data da evolução (preenchida automaticamente)</label><input id="data" type="date"/><p class="hint">Atualizada para o dia de hoje ao iniciar uma nova evolução. Altere somente se precisar registrar outra data.</p></div></section><section class="panel"><h2>Preenchimento</h2>
+
+<div class="twocol"></div>
+
+<h3>Cirurgia / pós-operatório</h3>
+
+
+<h3>EVOLUÇÃO — avaliação por sistemas</h3>
+<div id="systems">
+<div class="field"><label>Evolução global do quadro clínico</label><select id="trajetoria"><option value="">Não informado — apenas frase de abertura</option><option value="estabilidade">Apresenta estabilidade do quadro clínico</option><option value="melhora">Apresenta melhora clínica</option><option value="piora">Evolui com piora clínica</option></select></div>
+<div class="field" hidden="" id="trajetoriaDetails"><label>Justificativa / achados que sustentam a avaliação (opcional)</label><textarea id="trajetoriaObs" placeholder="Ex.: redução da dor e melhor aceitação da dieta; nova febre ou piora da função renal"></textarea></div>
+<h3>Neurológico</h3><div class="twocol"><div class="field"><label>Glasgow (3–15)</label><input id="glasgow" max="15" min="3" placeholder="Preencher" type="number"/></div><div class="field"><label>Estado neurológico</label><select id="neuro"><option value="">Não informado</option><option value="Lúcido e orientado">Lúcido e orientado</option><option value="Pouco comunicativo">Pouco comunicativo</option><option value="Desorientado">Desorientado</option></select></div></div><div class="field"><label>Dor</label><select id="dorStatus"><option value="">Não informado</option><option value="nega">Nega queixas de dor</option><option value="refere">Refere dor</option></select></div><div class="field" hidden="" id="dorDetails"><label>Localização e características da dor (opcional)</label><input id="dorDescricao" placeholder="Ex.: abdominal em hipocôndrio direito, EVA 6/10"/></div>
+<h3>Hemodinâmico</h3><div class="twocol"><div class="field"><label>Estabilidade</label><select id="hemo"><option value="">Não informado</option><option value="Estável hemodinamicamente">Estável hemodinamicamente</option><option value="Instável hemodinamicamente">Instável hemodinamicamente</option></select></div><div class="field"><label>Drogas vasoativas</label><select id="dva"><option value="">Não informado</option><option value="Sem uso de DVA">Sem uso de DVA</option><option value="Às custas de DVA">Às custas de DVA</option></select></div></div><div class="field" hidden="" id="dvaDetails"><label>DVA e velocidade de infusão (incluir unidades)</label><textarea id="dvaDrugs" placeholder="Ex.: Noradrenalina 0,1 mcg/kg/min"></textarea></div>
+<h3>Respiratório</h3><div class="twocol"><div class="field"><label>Padrão respiratório</label><select id="resp"><option value="">Não informado</option><option value="Eupneico">Eupneico</option><option value="Dispneico">Dispneico</option></select></div><div class="field"><label>Suporte respiratório</label><select id="suporte"><option value="">Não informado</option><option value="Em ar ambiente">Em ar ambiente</option><option value="Em cateter nasal">Cateter nasal</option><option value="Intubado sob ventilação mecânica invasiva">IOT / VM</option></select></div></div><div class="field" hidden="" id="catDetails"><label>Fluxo do cateter nasal (L/min)</label><input id="catFlow" min="0" placeholder="Ex.: 2" step="0.5" type="number"/></div><div class="field" hidden="" id="iotDetails"><label>Parâmetros da ventilação mecânica</label><textarea id="iotParams" placeholder="Modo, FiO2, PEEP, FR, VT ou pressão, conforme aplicável"></textarea></div>
+<h3>Renal</h3><div class="twocol"><div class="field"><label>Diurese</label><select id="renal"><option value="">Não informado</option><option value="Diurese espontânea">Espontânea</option><option value="Diurese por SVD">Por SVD</option></select></div><div class="field"><label>Aspecto da diurese</label><select id="urine"><option value="">Não informado</option><option value="clara">Clara</option><option value="concentrada">Concentrada</option><option value="com grumos">Com grumos</option><option value="com hematúria">Hematúria</option></select></div></div>
+<h3>Gastrointestinal</h3><div class="field"><label>Via de alimentação / dieta</label><select id="nutricao"><option value="">Não informado</option><option value="jejum">Jejum</option><option value="vo">Dieta via oral</option><option value="sne">Dieta via SNE</option><option value="npt">Nutrição parenteral total (NPT)</option></select></div><div class="field" hidden="" id="voDetails"><label>Tipo de dieta via oral</label><select id="voTipo"><option value="">Selecionar tipo</option><option value="leve">Leve</option><option value="geral">Geral</option></select></div><div class="field" hidden="" id="sneDetails"><label>Vazão da dieta via SNE (mL/h)</label><input id="sneVazao" min="0" placeholder="Ex.: 40" step="any" type="number"/></div><div class="field" hidden="" id="nptDetails"><label>Vazão da NPT (mL/h)</label><input id="nptVazao" min="0" placeholder="Ex.: 34" step="any" type="number"/></div><div class="twocol"><div class="field"><label>Evacuações</label><select id="evac"><option value="">Não informado</option><option value="presentes">Presentes</option><option value="ausentes">Ausentes</option></select></div><div class="field" hidden="" id="evacDateDetails"><label>Data da última evacuação</label><input id="lastEvac" type="date"/></div><div class="field"><label>Flatos</label><select id="flatos"><option value="">Não informado</option><option value="presentes">Presentes</option><option value="ausentes">Ausentes</option></select></div></div>
+<div class="field"><label>Náuseas e vômitos</label><select id="nvStatus"><option value="">Não informado</option><option value="refere">Refere náuseas e vômitos</option><option value="nega">Nega náuseas e vômitos</option></select></div>
+<h3>Outros</h3><div class="twocol"><div class="field"><label>Deambulação</label><select id="deambula"><option value="">Não informado</option><option value="Deambulando sem auxílio">Sem auxílio</option><option value="Deambulando com auxílio">Com auxílio</option></select></div></div>
+</div>
+<div class="field" style="margin-top:12px"><label>Intercorrências / evolução adicional</label><textarea id="evolExtra" placeholder="Ex.: aguarda exame, intercorrências noturnas, queixas específicas"></textarea></div><div class="lab-inline" id="labPanel"><h2>📊 Laboratórios — comparação por paciente</h2><p class="hint">Selecione um cadastro fictício na lateral. Salve um conjunto de exames por data e compare as tendências. Os resultados ficam somente neste navegador, sem sincronização ou criptografia.</p><div class="twocol"><div class="field"><label>Data da coleta</label><input id="labDate" type="date"/></div><div class="field"><label>Cole aqui o texto completo do laudo (ou exames abreviados)</label><textarea id="labPaste" placeholder="Cole HB 12,8 HT 38... ou o texto completo extraído do PDF do laboratório (sem identificação do paciente)."></textarea></div></div><div class="actions"><button class="secondary" id="labPreviewButton" type="button">Identificar e conferir exames</button><button id="labSave" type="button">Salvar exames da data</button><button class="secondary" id="labCopyLatest" type="button">Inserir últimos exames na evolução</button><button class="secondary" id="labDeleteDay" type="button">Excluir data selecionada</button><button class="secondary" id="labExport" type="button">Exportar CSV</button></div><p class="hint" id="labStatus" role="status"></p><div class="lab-preview" id="labParsedPreview" aria-live="polite">Cole o texto e clique em “Identificar e conferir exames”.</div><h3>Histórico comparativo</h3><div class="lab-table-wrap"><table class="lab-table" id="labTable"><tbody><tr><td>Selecione um paciente cadastrado.</td></tr></tbody></table></div><p class="lab-note">↑ aumento, ↓ queda, → sem mudança: comparação numérica entre as duas últimas coletas com valor disponível. Não representa melhora ou piora clínica. Confirme unidades, horários e resultados antes de registrar no prontuário.</p><h3>Último conjunto de exames</h3><div class="lab-preview" id="labLatest">Nenhum exame salvo.</div></div>
+<h3>EXAME FÍSICO — por sistemas</h3>
+<div id="efsystems">
+<h3>Geral</h3>
+<div class="twocol">
+<div class="field"><label>Estado geral</label><select id="efEstado"><option value="">Não informado</option><option value="BEG">BEG</option><option value="REG">REG</option></select></div>
+<div class="field"><label>Coloração</label><select id="efCor"><option value="">Não informado</option><option value="Corado">Corado</option><option value="Hipocorado">Hipocorado</option></select></div>
+<div class="field"><label>Icterícia</label><select id="efIctericia"><option value="">Não informado</option><option value="Ictérico">Ictérico</option><option value="Anictérico">Anictérico</option></select></div>
+<div class="field"><label>Hidratação</label><select id="efHidratacao"><option value="">Não informado</option><option value="Hidratado">Hidratado</option><option value="Desidratado">Desidratado</option></select></div>
+</div>
+<div class="chips"><label><input id="efTec" type="checkbox"/>TEC &lt; 3 s</label></div>
+<h3>Hemodinâmico / cardiovascular</h3>
+<div class="chips"><label><input id="efRcr" type="checkbox"/>RCR 2T BNF, sem sopros</label></div>
+<h3>Abdominal</h3>
+<div class="twocol">
+<div class="field"><label>Palpação</label><select id="efDorAbd"><option value="">Não informado</option><option value="Indolor à palpação">Indolor</option><option value="Doloroso à palpação">Doloroso</option></select></div>
+<div class="field"><label>Massas palpáveis</label><select id="efMassas"><option value="">Não informado</option><option value="Sem massas palpáveis">Sem massas</option><option value="Com massas palpáveis">Com massas</option></select></div>
+<div class="field"><label>Aspecto abdominal</label><select id="efAbdAspecto"><option value="">Não informado</option><option value="Flácido">Flácido</option><option value="Distendido">Distendido</option></select></div>
+<div class="field"><label>Murphy</label><select id="efMurphy"><option value="">Não avaliado / não informado</option><option value="Murphy positivo">Positivo</option><option value="Murphy negativo">Negativo</option></select></div>
+<div class="field"><label>Descompressão brusca (DB)</label><select id="efDb"><option value="">Não avaliado / não informado</option><option value="DB positivo">Positivo</option><option value="DB negativo">Negativo</option></select></div>
+</div>
+<div class="chips"><label><input id="efTimpanico" type="checkbox"/>Normotimpânico</label></div>
+<div class="field" style="margin-top:12px"><label>Drenos abdominais</label><select id="efDrenoStatus"><option value="">Não informado</option><option value="presente">Dreno presente</option><option value="ausente">Sem drenos abdominais</option></select></div>
+<div hidden="" id="efDrenoDetalhes"><div class="twocol">
+<div class="field"><label>Aspecto do débito</label><select id="efDrenoAspecto"><option value="">Não informado</option><option value="seroso">Seroso</option><option value="hemático">Hemático</option><option value="sero-hemático">Sero-hemático</option></select></div>
+<div class="field"><label>Débito (opcional)</label><input id="efDrenoDebito" placeholder="Ex.: 50 mL/24h"/></div>
+</div><div class="field"><label>Localização / tipo de dreno (opcional)</label><input id="efDrenoLocal" placeholder="Ex.: dreno em flanco direito"/></div></div>
+</div>
+<h3>Extremidades e sangramentos</h3>
+<div class="chips"><label><input id="efPanturrilhas" type="checkbox"/>Panturrilhas livres, sem sinais de empastamento</label><label><input id="efSemSangramento" type="checkbox"/>Sem novas exteriorizações de sangramento</label></div>
+<div class="field" style="margin-top:12px"><label>Exame físico adicional</label><textarea id="efExtra" placeholder="ACV, AR, ferida, drenos, toque retal, achados relevantes"></textarea></div>
+<h3>CONTROLES</h3>
+<div class="field"><label>Cole os controles diretamente do sistema hospitalar</label><textarea id="controlesColados" placeholder="# CONTROLES (29/10/2026): PAS 114-141 // PAD 50-63 // PAM 72-87 // FC 93-105 // FR 16-20 // Tax: 36,3-37,5 // SatO2 90-96 // GLI 174-238 // DRENO // DIU" rows="4"></textarea><p class="hint">O gerador identifica a data, organiza os parâmetros e omite campos vazios. Confira os valores e as unidades antes de copiar para o prontuário.</p></div>
+<h3>EXAMES</h3>
+<div class="field"><label>Laboratório</label><textarea id="lab" placeholder="Data e valores conferidos"></textarea></div>
+<div class="field"><label>Imagem / procedimentos</label><textarea id="imagem"></textarea></div>
+<div hidden="" id="fastSection" style="display:none"><h3>FAST HUG EPM</h3>
+<div class="field"><label>Preencha apenas os itens revisados (um por linha)</label><textarea id="fast" placeholder="F - ...
+A - ...
+S - ...
+T - ...
+H - ...
+U - ...
+G - ...
+E - ...
+P - ...
+M - ...
+Outros: ..."></textarea></div></div>
+<h3>MEDICAÇÕES EM USO</h3>
+<p class="hint">Registre apenas medicações efetivamente prescritas. Deixe em branco os itens não avaliados.</p>
+<div class="field"><label for="medAtb">Antibióticos</label><textarea id="medAtb" placeholder="Ex.: Piperacilina/tazobactam 4,5 g EV 6/6h"></textarea></div><div class="field"><label for="medAtbInicio">Data de início do antibiótico</label><input id="medAtbInicio" type="date"/><p class="hint">O primeiro dia de uso é D1. O dia de tratamento é calculado automaticamente usando a data da evolução. Para antibióticos iniciados em datas diferentes, registre separadamente no campo livre.</p></div>
+<div class="twocol"><div class="field"><label for="medTev">Profilaxia TEV</label><select id="medTev"><option value="">Não informado</option><option value="Enoxaparina">Enoxaparina</option><option value="HNF">HNF</option><option value="Não prescrita">Não prescrita</option></select></div><div class="field"><label for="medTevDetalhes">Dose / frequência (opcional)</label><input id="medTevDetalhes" placeholder="Ex.: 40 mg SC 1x/dia"/></div></div>
+<div class="twocol"><div class="field"><label for="medDup">Profilaxia DUP</label><select id="medDup"><option value="">Não informado</option><option value="Omeprazol VO">Omeprazol VO</option><option value="Omeprazol EV">Omeprazol EV</option><option value="Pantoprazol">Pantoprazol</option><option value="Outro">Outro</option><option value="Não prescrita">Não prescrita</option></select></div><div class="field"><label for="medDupDetalhes">Dose / frequência ou outra medicação (opcional)</label><input id="medDupDetalhes" placeholder="Ex.: 40 mg 1x/dia"/></div></div>
+<div class="field"><label for="medAnalgesia">Analgesia</label><textarea id="medAnalgesia" placeholder="Medicações, doses e vias em uso"></textarea></div>
+<div class="field"><label for="medAntiemeticos">Antieméticos</label><textarea id="medAntiemeticos" placeholder="Medicações, doses e vias em uso"></textarea></div>
+<h3>CONDUTA</h3><div class="field"><label>Condutas pré-prontas (marque as realizadas ou planejadas)</label><div class="checks" id="condutasProntas"><label><input type="checkbox" value="Mantenho antibioticoterapia"/> Mantenho antibioticoterapia</label><label><input type="checkbox" value="Solicito exames laboratoriais na rotina"/> Solicito exames laboratoriais na rotina</label><label><input type="checkbox" value="Vigilância infecciosa"/> Vigilância infecciosa</label><label><input type="checkbox" value="Vigilância clínica e hemodinâmica"/> Vigilância clínica e hemodinâmica</label></div></div><div class="field"><label>Conduta (uma ação por linha)</label><textarea id="conduta" placeholder="Mantenho ...
+Solicito ...
+Reavalio ..."></textarea></div>
+<div class="field"><label><input id="preceptoria" style="width:auto;margin-right:8px" type="checkbox"/>Confirmo que a conduta foi discutida com a preceptoria</label><p class="hint">Marque apenas após a discussão. O título da conduta será “Discutida com preceptoria” quando confirmado.</p></div>
+<div class="field"><label><input id="comunicacaoPaciente" style="width:auto;margin-right:8px" type="checkbox"/>Confirmo que a conduta foi discutida com o paciente e acompanhantes, que estão cientes e concordantes</label><p class="hint">Ao confirmar, a frase será acrescentada automaticamente ao final da conduta. Marque apenas quando essa comunicação e concordância ocorreram.</p></div>
+<div class="actions"><button id="generate" type="button">Atualizar texto</button><button class="secondary" id="reset" type="button">Limpar campos</button></div>
+<div class="warn">Privacidade: este arquivo funciona localmente e não envia os campos a um servidor. Não contém salvamento automático. Para uso clínico, revise cada informação e siga as políticas institucionais e a LGPD.</div>
+</section><section class="panel"><h2>Texto gerado</h2><p class="hint">O texto é atualizado ao preencher. Campos vazios são omitidos. A saída é editável antes de copiar.</p><textarea id="out" spellcheck="false"></textarea><div class="actions"><button id="copy">Copiar evolução</button><button class="secondary" id="download">Baixar TXT</button></div><p class="hint" id="status" role="status"></p></section></div></main></div>
+<script>
+const $=id=>document.getElementById(id);const val=id=>$(id).value.trim();
+const checks=id=>[...document.querySelectorAll('#'+id+' input:checked')].map(x=>x.value);
+const lines=t=>t.split('\n').map(x=>x.trim()).filter(Boolean);
+function sentence(t){t=t.trim();return t ? t.replace(/[.\s]+$/,'')+'.' : ''}
+// Resumo automático: até três datas mais recentes, em ordem decrescente.
+const LAB_OUTPUT_ORDER=['HB','HT','LEUCO','PLQ','UR','CR','NA','K','CA','MG','INR','RTTPA','PCR'];
+const LAB_OUTPUT_LABEL={HB:'Hb',HT:'Ht',LEUCO:'Leuco',PLQ:'Plq',UR:'Ur',CR:'Cr',NA:'Na',K:'K',CA:'Ca',MG:'Mg',INR:'INR',RTTPA:'TTPA',PCR:'PCR'};
+function labsForEvolution(){
+ const patient=$('patientList')?.value || $('patientCode')?.value.trim().toUpperCase();
+ if(!patient)return '';
+ let records={};
+ try{records=JSON.parse(localStorage.getItem('evolucao_cg_labs_demo_v1')||'{}')[patient]||{}}catch{return ''}
+ const dates=Object.keys(records).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)).sort().reverse();
+ const output=[];
+ for(const [dayIndex,d] of dates.slice(0,3).entries()){
+  const values=records[d]||{};
+  const items=LAB_OUTPUT_ORDER.filter(k=>values[k]!==undefined&&values[k]!==null&&values[k]!=='').map(k=>{
+   const current=Number(values[k]);
+   const older=dates.slice(dates.indexOf(d)+1).find(day=>records[day]&&records[day][k]!==undefined);
+   let arrow='';
+   if(dayIndex===0 && older){const previous=Number(records[older][k]);if(Number.isFinite(current)&&Number.isFinite(previous))arrow=current>previous?' ↑':current<previous?' ↓':' →';}
+   return LAB_OUTPUT_LABEL[k]+' '+String(values[k]).replace('.',',')+arrow;
+  });
+  if(items.length)output.push('- '+d.slice(8,10)+'/'+d.slice(5,7)+': '+items.join(' '));
+ }
+ return output.join('\n');
+}
+function togglePain(){const el=$('dorDetails');if(el)el.hidden=val('dorStatus')!=='refere';}
+function toggleDreno(){const el=$('efDrenoDetalhes');if(el)el.hidden=val('efDrenoStatus')!=='presente';}
+document.addEventListener('change',()=>{togglePain();toggleDreno();});
+function parseControles(raw){
+ let t=raw.replace(/\u00a0/g,' ').trim();
+ if(!t)return {data:'',texto:''};
+ const dataMatch=t.match(/(?:#?\s*CONTROLES\s*)?\(\s*(\d{2}\/\d{2}\/\d{4})\s*\)/i);
+ const data=dataMatch?dataMatch[1]:'';
+ t=t.replace(/^\s*#?\s*CONTROLES\s*(?:\(\s*\d{2}\/\d{2}\/\d{4}\s*\))?\s*:?/i,'').trim();
+ const labels={'PAS':'PAS','PAD':'PAD','PAM':'PAM','FC':'FC','FR':'FR','TAX':'Temperatura','TEMP':'Temperatura','TEMPERATURA':'Temperatura','T':'Temperatura','SATO2':'SatO₂','SAT02':'SatO₂','SPO2':'SatO₂','GLI':'Glicemia','GLIC':'Glicemia','GLICEMIA':'Glicemia','DRENO':'Dreno','DRENOS':'Dreno','DIU':'Diurese','DIURESE':'Diurese'};
+ const result=[];
+ for(const part of t.split(/\s*\/\/\s*|\n+/)){
+  const item=part.trim().replace(/^[-•]\s*/,'');if(!item)continue;
+  const m=item.match(/^([A-Za-zÀ-ÿ0-9₂]+)\s*:?\s*(.*)$/);
+  if(!m){result.push(item);continue;}
+  const key=m[1].toUpperCase().replace(/₂/g,'2');const label=labels[key];
+  if(label){const value=m[2].trim();if(value)result.push(label+': '+value);}
+  else result.push(item);
+ }
+ return {data,texto:result.join(' // ')};
+}
+function build(){
+ const parts=['#'+(val('especialidade')||'CIRURGIA GERAL')+'#'];
+ if(val('id'))parts.push('# ID: '+val('id'));
+ const infoCirurgia=[val('dpoCalculado'),val('cirurgia')].filter(Boolean).join(' de ');
+ const hdItens=[]; if(infoCirurgia||val('dpo'))hdItens.push('- '+(infoCirurgia||val('dpo')));
+ if(val('hd'))hdItens.push(...lines(val('hd')).map(x=>'- '+x.replace(/^[-•]\s*/,'')));
+ if(hdItens.length)parts.push('# HD:\n'+hdItens.join('\n'));
+ if(val('hpma'))parts.push('# HPMA:\n'+val('hpma'));
+ const antecedentes=[['#AP',val('ap')],['#ACx',val('acx')],['#MUC:',val('muc')],['#Alergias:',val('alergias')]].filter(([,v])=>v).map(([titulo,v])=>titulo+' '+v.replace(/\n+/g,'; '));
+ if(antecedentes.length)parts.push(antecedentes.join('\n'));
+ const e=[];const add=x=>{if(x)e.push(sentence(x))};
+ const abertura=val('modelo')==='PS CIRURGIA GERAL'?'Evoluo paciente em leito de sala de emergência':'Evoluo paciente em leito de enfermaria';
+ const trajetoria={estabilidade:'apresenta estabilidade do quadro clínico',melhora:'apresenta melhora clínica',piora:'evolui com piora clínica'}[val('trajetoria')];
+ const introducao=abertura+(trajetoria?', '+trajetoria:'')+'.';
+ if(val('trajetoria')&&val('trajetoriaObs'))add(val('trajetoriaObs'));
+ const g=val('glasgow');if(g && Number(g)>=3 && Number(g)<=15)add('Glasgow '+g);else if(g)add('Glasgow informado fora do intervalo 3–15: revisar');
+ add(val('neuro'));if(val('dorStatus')==='nega')add('Nega queixas de dor');if(val('dorStatus')==='refere')add('Refere dor'+(val('dorDescricao')?' '+val('dorDescricao'):''));add(val('hemo'));
+ if(val('dva')==='Às custas de DVA')add('Às custas de DVA'+(val('dvaDrugs')?': '+val('dvaDrugs'): ' (drogas e doses não informadas)'));else add(val('dva'));
+
+ add(val('resp'));if(val('suporte')==='Em cateter nasal')add('Em cateter nasal'+(val('catFlow')?' a '+val('catFlow')+' L/min':' (fluxo não informado)'));else if(val('suporte').startsWith('Intubado'))add(val('suporte')+(val('iotParams')?', parâmetros: '+val('iotParams'):' (parâmetros não informados)'));else add(val('suporte'));
+ if(val('renal'))add(val('renal')+(val('urine')?', de aspecto '+val('urine'):''));else if(val('urine'))add('Diurese de aspecto '+val('urine'));
+ if(val('evac'))add('Evacuações '+val('evac')+(val('evac')==='ausentes'&&val('lastEvac')?', última em '+val('lastEvac').split('-').reverse().join('/') :''));
+ if(val('flatos')==='presentes')add('Eliminando flatos');else if(val('flatos')==='ausentes')add('Flatos ausentes');if(val('nvStatus')==='refere')add('Refere náuseas e vômitos');if(val('nvStatus')==='nega')add('Nega náuseas e vômitos');
+ if(val('nutricao')==='jejum')add('Em jejum por prescrição');
+ if(val('nutricao')==='vo')add('Em dieta via oral'+(val('voTipo')?' '+val('voTipo'): ' (tipo não informado)'));
+ if(val('nutricao')==='sne')add('Em dieta enteral via SNE'+(val('sneVazao')?' à vazão de '+val('sneVazao')+' mL/h':' (vazão não informada)'));
+ if(val('nutricao')==='npt')add('Em NPT'+(val('nptVazao')?' à vazão de '+val('nptVazao')+' mL/h':' (vazão não informada)'));
+ add(val('deambula'));
+ const conflicts=[];
+ 
+ if(val('evolExtra'))e.push(sentence(val('evolExtra')));
+ parts.push('# EVOLUÇÃO:\n'+introducao+(e.length?' '+e.join(' '):''));
+ const general=[val('efEstado'),val('efCor'),val('efIctericia'),val('efHidratacao')].filter(Boolean);
+ const acv=[$('efRcr').checked?'RCR 2T BNF, sem sopros':'',$('efTec').checked?'TEC < 3 s':''].filter(Boolean);
+ const abdominal=[val('efAbdAspecto'),val('efDorAbd'),val('efMassas'),$('efTimpanico').checked?'Normotimpânico':'',val('efMurphy'),val('efDb')].filter(Boolean);
+ let dreno='';if(val('efDrenoStatus')==='ausente')dreno='Sem drenos abdominais';else if(val('efDrenoStatus')==='presente'){dreno='Dreno abdominal presente'+(val('efDrenoLocal')?' ('+val('efDrenoLocal')+')':'')+(val('efDrenoAspecto')?', com débito '+val('efDrenoAspecto'):'')+(val('efDrenoDebito')?', '+val('efDrenoDebito'):'');}
+ const exam=[];
+ if(general.length)exam.push('- Geral: '+sentence(general.join(', ')));
+ if(acv.length)exam.push('- ACV: '+sentence(acv.join(', ')));
+ const abdText=[];
+ if(abdominal.length)abdText.push(sentence('Abdome '+abdominal.join(', ')));
+ if(dreno)abdText.push(sentence(dreno));
+ if(abdText.length)exam.push('- ABD: '+abdText.join(' '));
+ if($('efPanturrilhas').checked)exam.push('- Panturrilhas livres, sem sinais de empastamento.');
+ if($('efSemSangramento').checked)exam.push('- Sem novas exteriorizações de sangramento.');
+ if(val('efExtra'))exam.push('- '+sentence(val('efExtra')));
+ if(exam.length)parts.push('# EF:\n'+exam.join('\n'));
+ const controles=parseControles(val('controlesColados'));
+ if(controles.texto)parts.push('# CONTROLES'+(controles.data?' ('+controles.data+')':val('data')?' ('+val('data').split('-').reverse().join('/')+')':'')+':\n'+controles.texto);
+ const labAuto=labsForEvolution();const labManual=val('lab');
+ if(labAuto||labManual)parts.push('# EXAMES LABORATORIAIS:\n'+[labAuto,labManual].filter(Boolean).join('\n'));
+ if(val('imagem'))parts.push('# EXAMES DE IMAGEM / PROCEDIMENTOS:\n'+val('imagem'));
+ if(val('modelo')==='PS CIRURGIA GERAL' && val('fast'))parts.push('# FAST HUG EPM:\n'+val('fast'));
+ const meds=[];
+ if(val('medAtb')){const atbDay=calcAtbDay(val('medAtbInicio'),val('data')||localToday());meds.push('- Antibióticos: '+val('medAtb').replace(/\n/g,'; ')+(atbDay?' — '+atbDay:''));}
+ if(val('medTev'))meds.push('- Profilaxia TEV: '+val('medTev')+(val('medTevDetalhes')?' — '+val('medTevDetalhes'):''));
+ if(val('medDup'))meds.push('- Profilaxia DUP: '+val('medDup')+(val('medDupDetalhes')?' — '+val('medDupDetalhes'):''));
+ if(val('medAnalgesia'))meds.push('- Analgesia: '+val('medAnalgesia').replace(/\n/g,'; '));
+ if(val('medAntiemeticos'))meds.push('- Antieméticos: '+val('medAntiemeticos').replace(/\n/g,'; '));
+ if(meds.length)parts.push('# MEDICAÇÕES EM USO:\n'+meds.join('\n'));
+ const condutas=[...document.querySelectorAll('#condutasProntas input:checked')].map(x=>x.value);
+ const extras=lines(val('conduta')).map(x=>x.replace(/^[-•]\s*/,''));
+ const todasCondutas=[...new Set([...condutas,...extras])];
+ if(todasCondutas.length)parts.push('# CONDUTA'+($('preceptoria').checked?' (Discutida com preceptoria)':'')+':\n'+todasCondutas.map(x=>'- '+x).join('\n')+($('comunicacaoPaciente').checked?'\n- Conduta discutida com paciente e acompanhantes, cientes e concordantes.':''));
+ const issues=[];
+ if(conflicts.length)issues.push('ATENÇÃO: opções conflitantes na evolução: '+conflicts.join('; '));
+ return (issues.length?issues.join('\n')+'\n\n':'')+parts.join('\n\n');
+}
+function localToday(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
+function calcAtbDay(inicio,evolucao){
+ const valid=x=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(x))return NaN;const [y,m,d]=x.split('-').map(Number);const ms=Date.UTC(y,m-1,d);return new Date(ms).toISOString().slice(0,10)===x?ms:NaN};
+ const a=valid(inicio),b=valid(evolucao);
+ if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)return '';
+ return 'D'+(Math.round((b-a)/86400000)+1);
+}
+function calcDpo(){
+ const c=val('dataCirurgia'),e=val('data')||localToday();
+ const parse=x=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(x))return NaN;const [y,m,d]=x.split('-').map(Number);const ms=Date.UTC(y,m-1,d);return new Date(ms).toISOString().slice(0,10)===x?ms:NaN};
+ const start=parse(c),end=parse(e);let txt='';
+ if(Number.isFinite(start)&&Number.isFinite(end)){const n=Math.round((end-start)/86400000);txt=n<0?'Data da cirurgia posterior à evolução — revisar':n+'º PO';}
+ $('dpoCalculado').value=txt;
+}
+function update(){ calcDpo(); $('trajetoriaDetails').hidden=!val('trajetoria'); for(const [box,show] of [['dvaDetails',val('dva')==='Às custas de DVA'],['catDetails',val('suporte')==='Em cateter nasal'],['iotDetails',val('suporte').startsWith('Intubado')],['evacDateDetails',val('evac')==='ausentes'],['voDetails',val('nutricao')==='vo'],['sneDetails',val('nutricao')==='sne'],['nptDetails',val('nutricao')==='npt']])$(box).hidden=!show; const showFast=val('modelo')==='PS CIRURGIA GERAL'; $('fastSection').hidden=!showFast; $('fastSection').style.display=showFast?'block':'none'; $('out').value=build();$('status').textContent='';}
+document.querySelectorAll('input,textarea:not(#out),select').forEach(x=>x.addEventListener('input',update));
+$('generate').onclick=update;
+$('reset').onclick=()=>{if(confirm('Limpar todos os campos?')){document.querySelectorAll('input,textarea,select').forEach(x=>{if(x.type==='checkbox')x.checked=false;else if(x.tagName==='SELECT')x.selectedIndex=0;else x.value=''});update()}};
+$('copy').onclick=async()=>{try{await navigator.clipboard.writeText(val('out'));$('status').textContent='Texto copiado.'}catch(e){$('out').focus();$('out').select();$('status').textContent='Selecione e copie manualmente (Ctrl/Cmd+C).'}};
+$('download').onclick=()=>{const a=document.createElement('a'),url=URL.createObjectURL(new Blob([val('out')],{type:'text/plain;charset=utf-8'}));a.href=url;a.download='evolucao_cirurgia_geral.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+if(!val('data'))$('data').value=localToday();
+update();
+</script><script>
+(function(){
+const key='evolucao_cg_cadastros_demo_v1';
+const doneKey='evolucao_cg_status_demo_v1';
+const labKey='evolucao_cg_labs_demo_v1';
+const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+const getDone=()=>{try{return JSON.parse(localStorage.getItem(doneKey)||'{}')}catch{return {}}};
+const saveDone=x=>{try{localStorage.setItem(doneKey,JSON.stringify(x));return true}catch{return false}};
+const fixed=['especialidade','setorPaciente','leitoPaciente','id','hd','hpma','ap','acx','muc','alergias','dpo','cirurgia','dataCirurgia'];
+const daily=['data','trajetoria','trajetoriaObs','evolExtra','efExtra','controlesColados','lab','imagem','fast','medAtb','medAtbInicio','medTev','medTevDetalhes','medDup','medDupDetalhes','medAnalgesia','medAntiemeticos','conduta'];
+const get=()=>{try{return JSON.parse(localStorage.getItem(key)||'{}')}catch{return {}}};
+const save=x=>{try{localStorage.setItem(key,JSON.stringify(x));return true}catch{return false}};
+const status=t=>document.getElementById('patientStatus').textContent=t;
+const code=()=>document.getElementById('patientCode').value.trim().toUpperCase();
+function refresh(selected=''){const select=document.getElementById('patientList'),records=get();select.replaceChildren(new Option('Novo cadastro',''));Object.keys(records).sort().forEach(k=>select.add(new Option(k,k)));select.value=selected;renderSidebar(selected);}
+function load(k){const r=get()[k];if(!r)return;fixed.forEach(id=>document.getElementById(id).value=r[id]||(id==='setorPaciente'?'ENFERMARIA':id==='especialidade'?'CIRURGIA GERAL':''));document.getElementById('modelo').value=r.modelo||'ENFERMARIA CIRURGIA GERAL';document.getElementById('patientCode').value=k;clearDaily();update();status('Cadastro carregado. Preencha a evolução do dia.');renderLabs();}
+function clearDaily(){daily.forEach(id=>document.getElementById(id).value='');document.getElementById('data').value=today();document.getElementById('preceptoria').checked=false;document.getElementById('comunicacaoPaciente').checked=false;document.querySelectorAll('#systems input[type=checkbox],#efsystems input[type=checkbox],#condutasProntas input[type=checkbox]').forEach(x=>x.checked=false);document.querySelectorAll('#efsystems select').forEach(x=>x.value='');toggleDreno();document.querySelectorAll('#systems select').forEach(x=>x.value='');$('trajetoria').value='';$('trajetoriaObs').value='';['glasgow','dvaDrugs','catFlow','iotParams','lastEvac','sneVazao','nptVazao','efDrenoDebito','efDrenoLocal'].forEach(x=>$(x).value='');update();}
+document.getElementById('savePatient').onclick=()=>{const k=code();if(!/^[A-Z0-9_-]{2,24}$/.test(k)){status('Use um código fictício de 2 a 24 caracteres, sem dados identificáveis.');return;}const records=get();records[k]={modelo:document.getElementById('modelo').value};fixed.forEach(id=>records[k][id]=document.getElementById(id).value);if(save(records)){refresh(k);status('Cadastro salvo neste navegador. A evolução diária não foi salva.');renderLabs()}else status('Não foi possível salvar neste navegador.');};
+document.getElementById('patientList').onchange=e=>{if(e.target.value){load(e.target.value);renderSidebar(e.target.value);}};
+document.getElementById('newPatient').onclick=()=>{fixed.forEach(id=>document.getElementById(id).value=id==='setorPaciente'?'ENFERMARIA':'');document.getElementById('patientCode').value='';document.getElementById('patientList').value='';clearDaily();renderSidebar('');status('Novo cadastro em branco.');renderLabs();};
+document.getElementById('clearDaily').onclick=()=>{if(confirm('Limpar apenas os campos da evolução diária?')){clearDaily();status('Campos diários limpos. Cadastro fixo preservado.')}};
+document.getElementById('deletePatient').onclick=()=>{const k=document.getElementById('patientList').value;if(!k){status('Selecione um cadastro para excluir.');return;}if(confirm('Excluir permanentemente o cadastro '+k+' deste navegador?')){const records=get();delete records[k];save(records);const done=getDone();delete done[k];saveDone(done);const labs=readLabs();delete labs[k];writeLabs(labs);refresh();document.getElementById('newPatient').click();status('Cadastro excluído deste navegador.')}};
+function renderSidebar(selected=''){
+ const host=document.getElementById('sidePatients');host.replaceChildren();
+ const term=document.getElementById('sideSearch').value.trim().toUpperCase();
+ const records=get(),all=Object.keys(records),done=getDone();
+ const doneCount=all.filter(k=>done[k]===today()).length;
+ document.getElementById('sideCounts').textContent=doneCount+' evoluídos hoje · '+(all.length-doneCount)+' pendentes';
+ const groups=[['ENFERMARIA','Enfermaria'],['UTI','UTI'],['PS','Pronto-socorro']];
+ let found=false;
+ groups.forEach(([group,title])=>{
+  const keys=all.filter(k=>{
+   const r=records[k]||{};
+   const setor=r.setorPaciente||((r.modelo||'').startsWith('PS')?'PS':'ENFERMARIA');
+   return setor===group && (k.toUpperCase().includes(term)||String(r.leitoPaciente||'').toUpperCase().includes(term));
+  }).sort();
+  const section=document.createElement('section');section.className='patient-group';
+  const heading=document.createElement('h3');heading.className='patient-group-title';heading.textContent=title+' ('+keys.length+')';section.append(heading);
+  if(!keys.length){const empty=document.createElement('p');empty.className='hint';empty.textContent='Nenhum paciente';section.append(empty);}
+  keys.forEach(k=>{
+   found=true;const r=records[k]||{};
+   const b=document.createElement('button');b.type='button';b.className='patient-item'+(k===selected?' active':'')+(done[k]===today()?' done':' pending');
+   const mark=document.createElement('span');mark.className='patient-avatar';mark.textContent='✚';
+   const label=document.createElement('span');label.className='patient-label';label.textContent=k;
+   if(r.leitoPaciente){const bed=document.createElement('span');bed.className='bed-tag';bed.textContent='Leito '+r.leitoPaciente;label.append(bed);}
+   const meta=document.createElement('span');meta.className='patient-meta';meta.textContent=done[k]===today()?'✓ Hoje':'○ Pendente';
+   b.append(mark,label,meta);b.onclick=()=>{document.getElementById('patientList').value=k;load(k);renderSidebar(k);closeSidebar();};section.append(b);
+  });host.append(section);
+ });
+ if(!found&&term){const empty=document.createElement('p');empty.className='hint';empty.textContent='Nenhum cadastro corresponde à busca.';host.prepend(empty);}
+}
+document.getElementById('sideSearch').addEventListener('input',()=>renderSidebar(document.getElementById('patientList').value));
+document.getElementById('sideNew').onclick=()=>{document.getElementById('newPatient').click();closeSidebar()};
+function closeSidebar(){document.getElementById('patientSidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open')}
+document.getElementById('openSidebar').onclick=()=>{document.getElementById('patientSidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open')};
+document.getElementById('closeSidebar').onclick=closeSidebar;
+document.getElementById('sidebarOverlay').onclick=closeSidebar;
+function markDone(mark){const k=document.getElementById('patientList').value;if(!k){status('Selecione e salve um cadastro fictício primeiro.');return;}const x=getDone();if(mark)x[k]=today();else delete x[k];if(saveDone(x)){renderSidebar(k);status(mark?'Marcado como evoluído hoje. Este indicador não salva o texto da evolução.':'Indicador removido.')}else status('Não foi possível salvar o indicador neste navegador.');}
+document.getElementById('markDone').onclick=()=>markDone(true);
+document.getElementById('unmarkDone').onclick=()=>markDone(false);
+
+
+// Exames seriados: armazenamento separado do cadastro, indexado por código e data.
+const readLabs=()=>{try{return JSON.parse(localStorage.getItem(labKey)||'{}')}catch{return {}}};
+const writeLabs=x=>{try{localStorage.setItem(labKey,JSON.stringify(x));return true}catch{return false}};
+const labNames=['HB','HT','LEUCO','PLQ','UR','CR','NA','K','TGO','TGP','FA','GGT','BT','BD','BI','AMILASE','LIPASE','PCR','INR','RTTPA','MG','CA','P','LACTATO','ALB','GLIC','GASO_PH','GASO_PCO2','GASO_HCO3'];
+const labAliases={HEMOGLOBINA:'HB',HEMATOCRITO:'HT',LEUCOCITOS:'LEUCO',LEUCÓCITOS:'LEUCO',PLAQUETAS:'PLQ',UREIA:'UR',CREATININA:'CR',SODIO:'NA',SÓDIO:'NA',POTASSIO:'K',POTÁSSIO:'K',MAGNESIO:'MG',MAGNÉSIO:'MG',CALCIO:'CA',CÁLCIO:'CA',FOSFORO:'P',FÓSFORO:'P',ALBUMINA:'ALB',GLICOSE:'GLIC',TTPA:'RTTPA'};
+// Extrai resultados atuais do texto linearizado do PDF, ignorando referências e históricos.
+function parseHospitalReport(text){
+ const result={}, warnings=[];
+ const normalized=text.replace(/\u00a0/g,' ').replace(/\r/g,'');
+ const header=/(?:VALOR\s*DE\s*REFER[ÊE]NCIA\s*)?(HEMOGRAMA\s+PARCIAL|HEMOGRAMA\s+COMPLETO|TEMPO\s+DE\s+PROTROMBINA\s*-?\s*TP|TEMPO\s+DE\s+TROMBOPLASTINA\s+PARCIAL\s+ATIVADO\s*-?\s*TTPA|UREIA|CREATININA|S[ÓO]DIO|POT[ÁA]SSIO|MAGN[ÉE]SIO|C[ÁA]LCIO|PROTE[ÍI]NA\s+C\s+REATIVA|PCR)\b/gi;
+ const parts=[...normalized.matchAll(header)];
+ if(!parts.length)return null;
+ const getNumber=s=>{const m=s.match(/^\s*([0-9]+(?:[.,][0-9]+)?)/);return m?Number(m[1].replace(',','.')):null};
+ const readLine=(block,regex)=>{const m=block.match(regex);return m?getNumber(m[1]):null};
+ const put=(key,val)=>{if(val!==null&&Number.isFinite(val))result[key]=val};
+ let dates=[];
+ for(let i=0;i<parts.length;i++){
+  const kind=parts[i][1].toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  let block=normalized.slice(parts[i].index+parts[i][0].length,parts[i+1]?.index??normalized.length);
+  // A coleta marca o fim da seção útil; não aceitar valores de resultados anteriores.
+  block=block.split(/Liberado eletronicamente:/i)[0].split(/Resultados Anteriores:/i)[0];
+  const full=normalized.slice(parts[i].index+parts[i][0].length,parts[i+1]?.index??normalized.length);
+  const dateMatch=full.match(/Coleta:\s*Colhido[^\n]*?\b(\d{2}\/\d{2}\/\d{4})\s+\d{2}:\d{2}/i);
+  if(dateMatch)dates.push(dateMatch[1]);
+  if(kind.startsWith('HEMOGRAMA')){
+   put('HB',readLine(block,/^\s*([^\n]+?)\s*HEMOGLOBINA\s*g\/dL/im));
+   put('HT',readLine(block,/^\s*([^\n]+?)\s*HEMAT[ÓO]CRITO\s*%/im));
+   put('LEUCO',readLine(block,/^\s*([^\n]+?)\s*LEUC[ÓO]CITOS/im));
+   put('PLQ',readLine(block,/^\s*([^\n]+?)\s*PLAQUETAS/im));
+  } else if(kind.includes('PROTROMBINA')){
+   put('INR',readLine(block,/^\s*([^\n]+?)\s*R\.N\.I\./im));
+  } else if(kind.includes('TROMBOPLASTINA')){
+   put('RTTPA',readLine(block,/^\s*([^\n]+?)\s*TEMPO\s*\(seg\)/im));
+  } else {
+   const keys={'UREIA':'UR','CREATININA':'CR','SODIO':'NA','POTASSIO':'K','MAGNESIO':'MG','CALCIO':'CA','PROTEINA C REATIVA':'PCR','PCR':'PCR'};
+   const key=keys[kind.replace(/\s+/g,' ').trim()];
+   if(key)put(key,readLine(block,/^\s*([^\n]+?)\s*RESULTADO\b/im));
+  }
+ }
+ const unique=[...new Set(dates)];
+ if(unique.length>1)warnings.push('O laudo contém coletas em datas diferentes: confira antes de salvar.');
+ const date=unique.length===1?unique[0].split('/').reverse().join('-'):null;
+ return {result,errors:warnings,date,report:true};
+}
+function parseLabs(t){
+ const report=parseHospitalReport(t);
+ if(report&&Object.keys(report.result).length)return report;
+ const result={},errors=[];
+ const norm=t.toUpperCase().replace(/\u00a0/g,' ').replace(/[|;\n]+/g,' ');
+ const re=/([A-ZÁÉÍÓÚÃÕÇ_0-9]+)\s*[:=]?\s*(-?\d+(?:[.,]\d+)?)/g;
+ let m;while((m=re.exec(norm))!==null){let name=labAliases[m[1]]||m[1];if(!labNames.includes(name))continue;
+ let raw=m[2];if(raw.includes('.')&&raw.includes(','))raw=raw.replace(/\./g,'').replace(',','.');else if(raw.includes(','))raw=raw.replace(',','.');else if(/^\d{1,3}\.\d{3}$/.test(raw)&&['LEUCO','PLQ'].includes(name))raw=raw.replace('.','');
+ const n=Number(raw);if(Number.isFinite(n))result[name]=n;else errors.push(name);
+ }
+ return {result,errors};
+}
+const labFormat=n=>Number.isInteger(n)?String(n):String(n).replace('.',',');
+function renderLabs(){
+ const k=document.getElementById('patientList').value,table=document.getElementById('labTable'),latest=document.getElementById('labLatest');
+ table.replaceChildren();latest.textContent='Nenhum exame salvo.';
+ if(!k){const r=table.insertRow();r.insertCell().textContent='Selecione um cadastro fictício para visualizar o histórico.';return;}
+ const dates=Object.keys(readLabs()[k]||{}).sort(), records=readLabs()[k]||{};
+ if(!dates.length){const r=table.insertRow();r.insertCell().textContent='Ainda não há exames para este paciente.';return;}
+ const names=labNames.filter(n=>dates.some(d=>Object.hasOwn(records[d],n)));
+ const thead=table.createTHead(),head=thead.insertRow();['Exame',...dates.map(d=>d.split('-').reverse().join('/')),'Tendência'].forEach(t=>{const th=document.createElement('th');th.textContent=t;head.append(th)});
+ const body=table.createTBody();names.forEach(n=>{const tr=body.insertRow();tr.insertCell().textContent=n;dates.forEach(d=>{const td=tr.insertCell();td.textContent=records[d][n]===undefined?'—':labFormat(records[d][n]);});const nums=dates.filter(d=>records[d][n]!==undefined).map(d=>records[d][n]);const td=tr.insertCell();td.className='trend';td.textContent=nums.length<2?'—':nums.at(-1)>nums.at(-2)?'↑':nums.at(-1)<nums.at(-2)?'↓':'→';});
+ const d=dates.at(-1);latest.textContent=d.split('-').reverse().join('/')+': '+labNames.filter(n=>records[d][n]!==undefined).map(n=>n+' '+labFormat(records[d][n])).join(' | ');
+}
+function labMessage(t){document.getElementById('labStatus').textContent=t;}
+function previewPastedLabs(){
+ const raw=document.getElementById('labPaste').value;
+ const parsed=parseLabs(raw),target=document.getElementById('labParsedPreview');
+ const keys=['HB','HT','LEUCO','PLQ','UR','CR','NA','K','CA','MG','INR','RTTPA','PCR'];
+ const labels={HB:'Hb',HT:'Ht',LEUCO:'Leuco',PLQ:'Plq',UR:'Ur',CR:'Cr',NA:'Na',K:'K',CA:'Ca',MG:'Mg',INR:'INR',RTTPA:'TTPA',PCR:'PCR'};
+ const date=parsed.date||document.getElementById('labDate').value;
+ const day=date&&/^\d{4}-\d\d-\d\d$/.test(date)?date.slice(8,10)+'/'+date.slice(5,7):'Data não identificada';
+ const vals=keys.filter(k=>parsed.result[k]!==undefined).map(k=>labels[k]+' '+labFormat(parsed.result[k]));
+ target.textContent=vals.length?day+': '+vals.join(' '):'Nenhum exame reconhecido. Confira se o texto foi copiado integralmente.';
+ if(parsed.date)document.getElementById('labDate').value=parsed.date;
+ labMessage((parsed.errors||[]).join(' ')|| (parsed.report?'Laudo identificado. Confira a prévia, a data e os valores antes de salvar.':'Confira os resultados antes de salvar.'));
+}
+document.getElementById('labPreviewButton').onclick=previewPastedLabs;
+document.getElementById('labPaste').addEventListener('paste',()=>setTimeout(previewPastedLabs,0));
+
+document.getElementById('labSave').onclick=()=>{
+ const k=document.getElementById('patientList').value,d=document.getElementById('labDate').value;
+ if(!k){labMessage('Primeiro selecione e salve um cadastro fictício.');return;}
+ if(!/^\d{4}-\d\d-\d\d$/.test(d)){labMessage('Informe uma data válida de coleta.');return;}
+ const parsed=parseLabs(document.getElementById('labPaste').value);
+ if(parsed.report&&parsed.date&&d!==parsed.date){document.getElementById('labDate').value=parsed.date;labMessage('A data da coleta foi ajustada para '+parsed.date.split('-').reverse().join('/')+'. Confira a prévia e clique novamente em Salvar.');return;}
+ if(parsed.errors.length){labMessage(parsed.errors.join(' '));return;}
+ if(!Object.keys(parsed.result).length){labMessage('Nenhum exame reconhecido. Use, por exemplo: HB 12,8 CR 0,9 PCR 45.');return;}
+ const labs=readLabs();labs[k]??={};const previous=labs[k][d]||{};
+ if(Object.keys(previous).length&&!confirm('Já existem exames nesta data. Mesclar novos valores e substituir os exames repetidos?'))return;
+ labs[k][d]={...previous,...parsed.result};
+ if(writeLabs(labs)){renderLabs();update();labMessage('Resultados salvos para '+k+' em '+d.split('-').reverse().join('/')+'. Confira valores, unidades e correspondência com o laudo original.')}else labMessage('Não foi possível salvar: armazenamento indisponível ou cheio.');
+};
+document.getElementById('labDeleteDay').onclick=()=>{const k=document.getElementById('patientList').value,d=document.getElementById('labDate').value;const labs=readLabs();if(!k||!d||!labs[k]?.[d]){labMessage('Selecione um paciente e uma data que tenha exames salvos.');return;}if(confirm('Excluir exames de '+d+' deste cadastro?')){delete labs[k][d];writeLabs(labs);renderLabs();update();labMessage('Data excluída.')}};
+document.getElementById('labCopyLatest').onclick=()=>{const k=document.getElementById('patientList').value,records=readLabs()[k]||{},dates=Object.keys(records).sort();if(!dates.length){labMessage('Nenhum exame salvo para inserir.');return;}const d=dates.at(-1),line='- '+d.split('-').reverse().join('/')+': '+labNames.filter(n=>records[d][n]!==undefined).map(n=>n+' '+labFormat(records[d][n])).join(' ');document.getElementById('lab').value='';update();labMessage('Os três últimos dias já aparecem automaticamente no texto gerado.');};
+document.getElementById('labExport').onclick=()=>{const k=document.getElementById('patientList').value,records=readLabs()[k]||{},dates=Object.keys(records).sort();if(!dates.length){labMessage('Nenhum exame para exportar.');return;}const csv=[['Data',...labNames].join(';'),...dates.map(d=>[d,...labNames.map(n=>records[d][n]===undefined?'':String(records[d][n]).replace('.',','))].join(';'))].join('\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='laboratorios_'+k+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+const now=new Date();document.getElementById('labDate').value=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+renderLabs();
+
+refresh();
+})();
+</script>
+
+<script>
+(function(){
+ const $=id=>document.getElementById(id);
+ const storageKey='evolucao_cg_historico_diario_demo_v1';
+ const currentCode=()=>($('patientList').value||$('patientCode').value||'').trim().toUpperCase();
+ const read=()=>{try{return JSON.parse(localStorage.getItem(storageKey)||'{}')}catch{return {}}};
+ const write=records=>{try{localStorage.setItem(storageKey,JSON.stringify(records));return true}catch{return false}};
+ const notice=message=>{$('dailyHistoryStatus').textContent=message};
+ function controls(){return [...document.querySelectorAll('#evolutionView input,#evolutionView textarea,#evolutionView select')].filter(el=>el.id!=='out'&&el.id!=='dailyHistorySelect'&&!el.closest('#labPanel')&&el.type!=='button'&&el.type!=='hidden'&&!el.readOnly&&(el.id||el.closest('#condutasProntas')));}
+ function capture(){return controls().map((el,i)=>({id:el.id||'',group:el.closest('#condutasProntas')?'condutasProntas':'',index:el.closest('#condutasProntas')?[...el.closest('#condutasProntas').querySelectorAll('input')].indexOf(el):null,value:el.type==='checkbox'?el.checked:el.value}));}
+ function restore(items,date){const byId=new Map(items.filter(x=>x.id).map(x=>[x.id,x]));controls().forEach(el=>{let entry=el.id?byId.get(el.id):null;if(!entry&&el.closest('#condutasProntas'))entry=items.find(x=>x.group==='condutasProntas'&&x.index===[...el.closest('#condutasProntas').querySelectorAll('input')].indexOf(el));if(!entry)return;if(el.id==='data')return;if(el.id==='preceptoria'||el.id==='comunicacaoPaciente'){el.checked=false;return;}if(el.type==='checkbox')el.checked=!!entry.value;else el.value=entry.value??'';});$('data').value=date;['data','trajetoria','dva','suporte','evac','nutricao','efDrenoStatus'].forEach(id=>$(id)?.dispatchEvent(new Event('input',{bubbles:true})));}
+ function refresh(){const key=currentCode(),entries=read()[key]||{},select=$('dailyHistorySelect'),selected=select.value;select.replaceChildren(new Option('Selecione uma data',''));Object.keys(entries).sort().reverse().forEach(date=>select.add(new Option(date.split('-').reverse().join('/'),date)));select.value=entries[selected]?selected:'';}
+ $('saveDailySnapshot').addEventListener('click',()=>{const key=currentCode(),date=$('data').value;if(!key||!$('patientList').value){notice('Salve e selecione um cadastro fictício primeiro.');return;}if(!date){notice('Informe a data da evolução.');return;}const records=read();records[key]||={};if(records[key][date]&&!confirm('Já existe evolução salva nesta data. Substituir o registro?'))return;records[key][date]={fields:capture(),savedAt:new Date().toISOString()};if(write(records)){refresh();$('dailyHistorySelect').value=date;notice('Evolução de '+date.split('-').reverse().join('/')+' salva neste navegador.')}else notice('Não foi possível salvar. Verifique o armazenamento do navegador.');});
+ $('copyPreviousDaily').addEventListener('click',()=>{const key=currentCode(),date=$('data').value,entries=read()[key]||{};const previous=Object.keys(entries).filter(d=>d<date).sort().reverse()[0];if(!previous){notice('Nenhuma evolução anterior à data selecionada foi encontrada.');return;}if(!confirm('Carregar os campos de '+previous.split('-').reverse().join('/')+' como rascunho para '+date.split('-').reverse().join('/')+'? Os campos atuais serão substituídos.'))return;restore(entries[previous].fields,date);notice('Rascunho baseado em '+previous.split('-').reverse().join('/')+'. Revise todos os dados antes de salvar ou copiar.');});
+ $('loadDailySnapshot').addEventListener('click',()=>{const key=currentCode(),date=$('dailyHistorySelect').value,entry=(read()[key]||{})[date];if(!entry){notice('Selecione uma evolução salva.');return;}if(!confirm('Abrir a evolução de '+date.split('-').reverse().join('/')+'? Isso substituirá os campos atuais não salvos.'))return;restore(entry.fields,date);notice('Evolução salva carregada. Revise os dados e as confirmações.');});
+ $('deleteDailySnapshot').addEventListener('click',()=>{const key=currentCode(),date=$('dailyHistorySelect').value;if(!date)return;if(!confirm('Excluir permanentemente a evolução salva em '+date+'?'))return;const records=read();if(records[key])delete records[key][date];if(write(records)){refresh();notice('Registro excluído.')}else notice('Falha ao excluir.');});
+ $('patientList').addEventListener('change',()=>{refresh();notice('')});
+ $('sidePatients').addEventListener('click',e=>{if(e.target.closest('.patient-item')){refresh();notice('')}});
+ $('newPatient').addEventListener('click',()=>{refresh();notice('')});
+ $('deletePatient').addEventListener('click',()=>{refresh();notice('')});
+ $('startEvolution').addEventListener('click',()=>{refresh();notice('')});
+ refresh();
+})();
+</script><script>(function(){
+const reg=document.getElementById('registrationView'),evo=document.getElementById('evolutionView');
+const $=id=>document.getElementById(id);
+function show(page){const isReg=page==='registration';reg.hidden=!isReg;evo.hidden=isReg;
+ if(!isReg){if(!$('data').value)$('data').value=new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0')+'-'+String(new Date().getDate()).padStart(2,'0');$('currentPatientLabel').textContent='Paciente: '+($('patientList').value||'não selecionado');update();}
+ window.scrollTo(0,0);
+}
+$('startEvolution').addEventListener('click',()=>{
+ let code=$('patientCode').value.trim().toUpperCase();
+ // Permite avançar mesmo sem digitar um código: gera um identificador fictício.
+ if(!code){
+   const existing=new Set(Array.from($('patientList').options).map(o=>o.value));
+   let n=1;while(existing.has('CASO-'+String(n).padStart(3,'0')))n++;
+   code='CASO-'+String(n).padStart(3,'0');$('patientCode').value=code;
+ }
+ if(!/^[A-Z0-9_-]{2,24}$/.test(code)){
+   $('patientStatus').textContent='Use um código fictício de 2 a 24 caracteres (letras, números, _ ou -).';
+   $('patientCode').focus();return;
+ }
+ // Aciona o salvamento existente e verifica que o paciente foi incluído.
+ $('savePatient').click();
+ const saved=Array.from($('patientList').options).some(o=>o.value===code);
+ if(saved){$('patientList').value=code;show('evolution');}
+ else{$('patientStatus').textContent='Não foi possível salvar o cadastro. Verifique as permissões de armazenamento do navegador.';}
+});
+$('backRegistration').addEventListener('click',()=>show('registration'));
+$('newPatient').addEventListener('click',()=>show('registration'));
+$('sideNew').addEventListener('click',()=>show('registration'));
+$('patientList').addEventListener('change',e=>{if(e.target.value)show('evolution')});
+$('sidePatients').addEventListener('click',e=>{if(e.target.closest('.patient-item'))show('evolution')});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){const field=$('data');const last=field.dataset.autoDate||'';const d=new Date();const current=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');if(!field.value||field.value===last){field.value=current;field.dataset.autoDate=current;update();}}});
+$('data').dataset.autoDate=$('data').value;
+show('registration');
+})();</script></body></html>
